@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.crud.mapper.ReplyMapper">
+   
+   <!-- 댓글 쓰기 -->
+   <insert id="insert">
+      insert into free_reply(rno, bno, reply, replyer, password)
+      values(seq_reply.nextval,#{bno},#{reply},#{replyer},#{password}) 
+   </insert>
+   
+   <!-- 댓글 조회 -->
+   <select id="read" resultType="org.crud.domain.ReplyVO">
+        select * from free_reply where rno = #{rno}
+   </select>
+   
+   <!-- 댓글 삭제 -->
+   <delete id="delete">
+   delete from free_reply where rno = #{rno}
+   </delete>
+   
+   <!-- 댓글 수정 -->
+   <update id="update">
+     update free_reply set reply = #{reply} where rno = #{rno}   
+   </update>
+  
+    <!-- 댓글페이지 -->
+  <!--  <select id="getListWithPaging" resultType="org.crud.domain.ReplyVO">
+     select * from free_reply where bno = #{bno} order by rno asc
+    </select> -->
+    
+    
+      <!-- 댓글페이지 및 페이징 -->
+    <select id="getListWithPaging" resultType="org.crud.domain.ReplyVO">
+    <![CDATA[
+      select *
+      from( select /*+index(free_reply idx_reply)*/
+          rownum rn, rno, bno, reply, replyer, replyDate, password
+          from free_reply 
+          where bno = #{bno} 
+          and rno > 0
+          and rownum <= #{paging.pageNum} * #{paging.amount}
+          ) where rn > (#{paging.pageNum} -1) * #{paging.amount}
+    ]]>
+    </select>
+   
+   <!-- 댓글 개수 파악  -->
+    <select id="CountBno" resultType="int">
+    <![CDATA[
+      select count(rno) from free_reply where bno = #{bno}
+    ]]>
+    </select>
+</mapper>

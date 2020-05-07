@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	  <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+	  <property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:orcl"></property>
+	  <property name="username" value="crud_board"></property>
+	  <property name="password" value="crud_board"></property>
+	</bean>
+	
+	<!-- HikariCP -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+	 <constructor-arg ref="hikariConfig"></constructor-arg>
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	  <property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	
+	<mybatis-spring:scan base-package="org.crud.mapper"/>
+	<context:component-scan base-package="org.crud.service"></context:component-scan>
+		
+</beans>
